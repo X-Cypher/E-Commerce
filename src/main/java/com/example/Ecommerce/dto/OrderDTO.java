@@ -21,10 +21,6 @@ public class OrderDTO {
 
     private Date orderDate;
 
-    private String userName;
-
-    private String email;
-
-    private List<OrderItemsDTO> orderItems;
+    private List<OrderItemDTO> orderItems;
 
 }
