@@ -21,6 +21,7 @@ public class Order {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     @JsonBackReference //user will manage serialization
     private User user;
 
@@ -30,6 +31,6 @@ public class Order {
 
     private Date orderDate;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL) //order delete toh orderItems bhi delete ho jayenge
     private List<OrderItem> orderItems;
 }
