@@ -1,13 +1,22 @@
 package com.example.Ecommerce.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.Ecommerce.dto.OrderDTO;
+import com.example.Ecommerce.dto.OrderRequestDTO;
+import com.example.Ecommerce.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/orders")
 @CrossOrigin("*")
 public class OrderController {
 
+    @Autowired
+    private OrderService orderService;
+
+    @PostMapping("/place/{userId}")
+    public OrderDTO placeOrder(@PathVariable Long userId, @RequestBody OrderRequestDTO orderRequestDTO){
+        return orderService.placeOrder(userId, orderRequestDTO.getProductQuantities());
+    }
 
 }
