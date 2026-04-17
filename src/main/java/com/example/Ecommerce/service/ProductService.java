@@ -10,8 +10,12 @@ import java.util.List;
 @Service
 public class ProductService {
 
+    private final ProductRepo productRepo;
+
     @Autowired
-    private ProductRepo productRepo;
+    public ProductService(ProductRepo productRepo) {
+        this.productRepo = productRepo;
+    }
 
     public List<Product> getAllProducts(){
         return productRepo.findAll();

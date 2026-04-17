@@ -13,8 +13,12 @@ import java.util.List;
 @CrossOrigin("*")
 public class OrderController {
 
+    private final OrderService orderService;
+
     @Autowired
-    private OrderService orderService;
+    public OrderController(OrderService orderService){
+        this.orderService = orderService;
+    }
 
     @PostMapping("/place/{userId}")
     public OrderDTO placeOrder(@PathVariable Long userId, @RequestBody OrderRequestDTO orderRequestDTO){

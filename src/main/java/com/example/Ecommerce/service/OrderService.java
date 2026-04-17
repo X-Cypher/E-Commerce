@@ -21,14 +21,16 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    @Autowired
-    private UserRepo userRepo;
+    private final UserRepo userRepo;
+    private final ProductRepo productRepo;
+    private final OrderRepo orderRepo;
 
     @Autowired
-    private ProductRepo productRepo;
-
-    @Autowired
-    private OrderRepo orderRepo;
+    public OrderService(UserRepo userRepo, ProductRepo productRepo, OrderRepo orderRepo) {
+        this.userRepo = userRepo;
+        this.productRepo = productRepo;
+        this.orderRepo = orderRepo;
+    }
 
     // We are returning OrderDTO because we want to display only the relevant data to the user, not the whole order. So unlike Order, OrderDto contains only the relevant order details not all
     public OrderDTO placeOrder(Long userId, Map<Long, Integer> productQuantities) {
