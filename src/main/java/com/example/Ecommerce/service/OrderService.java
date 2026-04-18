@@ -42,7 +42,6 @@ public class OrderService {
         order.setUser(user);
         order.setOrderDate(new Date());
         order.setStatus("Pending");
-        order.setTotalAmount(productQuantities.values().stream().mapToDouble(i -> i).sum());
 
         // for order we need order items
         List<OrderItem> orderItems = new ArrayList<>();
@@ -71,6 +70,7 @@ public class OrderService {
         }
 
         order.setOrderItems(orderItems);
+        order.setTotalAmount(orderItems.stream().mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity()).sum());
         Order savedOrder = orderRepo.save(order);
 
         return new OrderDTO(savedOrder.getId(), savedOrder.getTotalAmount(), savedOrder.getStatus(), savedOrder.getOrderDate(), orderItemsDTO);
