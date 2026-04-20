@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -34,4 +35,6 @@ public class User {
     @JsonIgnore //means orders ko serialize mat kro jab user ki baat ho
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) //user field in the order entity will manage the relationship
     private List<Order> orders;
+
+    private LocalDateTime createdAt;
 }

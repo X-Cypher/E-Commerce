@@ -66,7 +66,7 @@ public class OrderService {
 
             // add curr order item to order items list
             orderItems.add(orderItem);
-            orderItemsDTO.add(new OrderItemDTO(product.getName(), product.getPrice(), quantity));
+            orderItemsDTO.add(new OrderItemDTO(product.getName(), product.getPrice(), quantity, product.getImageUrl(), product.getId()));
         }
 
         order.setOrderItems(orderItems);
@@ -86,7 +86,9 @@ public class OrderService {
                         .map(item -> new OrderItemDTO(
                             item.getProduct().getName(),
                             item.getProduct().getPrice(),
-                            item.getQuantity())).collect(Collectors.toList());
+                            item.getQuantity(),
+                            item.getProduct().getImageUrl(),
+                            item.getProduct().getId())).collect(Collectors.toList());
 
             orderDTOS.add(new OrderDTO(order.getId(), order.getTotalAmount(), order.getStatus(), order.getOrderDate(), orderItemDTOS));
         }
@@ -107,11 +109,37 @@ public class OrderService {
                     .map(item -> new OrderItemDTO(
                             item.getProduct().getName(),
                             item.getProduct().getPrice(),
-                            item.getQuantity())).collect(Collectors.toList());
+                            item.getQuantity(),
+                            item.getProduct().getImageUrl(),
+                            item.getProduct().getId())).collect(Collectors.toList());
 
             orderDTOS.add(new OrderDTO(order.getId(), order.getTotalAmount(), order.getStatus(), order.getOrderDate(), orderItemDTOS));
         }
         return orderDTOS;
+    }
+
+    public OrderDTO updateOrderStatus(Long orderId, String status) {
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order with id " + orderId + " not found"));
+        order.setStatus(status);
+        Order savedOrder = orderRepo.save(order);
+
+        List<OrderItemDTO> orderItemDTOS = savedOrder.getOrderItems()
+                .stream()
+                .map(item -> new OrderItemDTO(
+                        item.getProduct().getName(),
+                        item.getProduct().getPrice(),
+                        item.getQuantity(),
+                        item.getProduct().getImageUrl(),
+                        item.getProduct().getId())).collect(Collectors.toList());
+
+        return new OrderDTO(savedOrder.getId(), savedOrder.getTotalAmount(), savedOrder.getStatus(), savedOrder.getOrderDate(), orderItemDTOS);
+    }
+
+    public void cancelOrder(Long orderId) {
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order with id " + orderId + " not found"));
+        orderRepo.delete(order);
     }
 
 }

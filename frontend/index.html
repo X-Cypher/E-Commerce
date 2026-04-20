@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MavenMart</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="images/logo2.png" alt="MavenMart" class="nav-logo">
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#" class="nav-link active" data-section="home">Home</a>
+                <a href="#" class="nav-link" data-section="products">Products</a>
+                <a href="#" class="nav-link" data-section="wishlist">Wishlist</a>
+                <a href="#" class="nav-link" data-section="cart">Cart <span id="cartCount">(0)</span></a>
+                <a href="#" class="nav-link" data-section="orders">My Orders</a>
+                <a href="#" class="nav-link" data-section="profile">Profile</a>
+                <a href="#" class="nav-link" data-section="admin">Admin</a>
+            </div>
+            <div class="nav-auth" id="navAuth">
+                <button class="btn btn-primary" onclick="navigateTo('login')">Login</button>
+                <button class="btn btn-secondary" onclick="navigateTo('register')">Register</button>
+            </div>
+            <div class="nav-user" id="navUser" style="display: none;">
+                <span id="userName"></span>
+                <button class="btn btn-logout" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <h2>Welcome to MavenMart</h2>
+                <p>Discover amazing products at great prices</p>
+                <button class="btn btn-primary btn-large" onclick="navigateTo('products')">Shop Now</button>
+            </div>
+            <div class="featured-products">
+                <h3>Featured Products</h3>
+                <div id="featuredProducts" class="products-grid"></div>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section id="products" class="section">
+            <div class="section-header">
+                <h2>All Products</h2>
+                <div class="filters">
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="">All Categories</option>
+                    </select>
+                    <select id="sortFilter" class="filter-select">
+                        <option value="">Sort By</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="name">Name: A-Z</option>
+                    </select>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
+                </div>
+            </div>
+            <div id="productsGrid" class="products-grid"></div>
+        </section>
+
+        <!-- Product Details Section -->
+        <section id="productDetails" class="section">
+            <button class="btn btn-secondary" onclick="navigateTo('products')">← Back to Products</button>
+            <div id="productDetailContent"></div>
+        </section>
+
+        <!-- Cart Section -->
+        <section id="cart" class="section">
+            <h2>Shopping Cart</h2>
+            <div id="cartItems" class="cart-items"></div>
+            <div class="cart-summary">
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span id="cartTotal">₹0.00</span>
+                </div>
+                <button class="btn btn-primary btn-large" id="checkoutBtn">Proceed to Checkout</button>
+            </div>
+        </section>
+
+        <!-- Orders Section -->
+        <section id="orders" class="section">
+            <h2>My Orders</h2>
+            <div id="ordersList" class="orders-list"></div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile" class="section">
+            <h2>My Profile</h2>
+            <div class="profile-container">
+                <!-- Profile View Mode -->
+                <div id="profileView" class="profile-view">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <div class="avatar-circle">
+                                <span id="profileAvatarInitial">U</span>
+                            </div>
+                        </div>
+                        <div class="profile-info">
+                            <h3 id="profileViewName">User Name</h3>
+                            <p id="profileViewEmail">user@email.com</p>
+                            <button class="btn btn-primary" onclick="toggleEditMode()">Edit Profile</button>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-stats">
+                        <div class="stat-card clickable" onclick="navigateTo('orders')">
+                            <div class="stat-icon">📦</div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="totalOrders">0</div>
+                                <div class="stat-label">Total Orders</div>
+                            </div>
+                        </div>
+                        <div class="stat-card clickable" onclick="navigateTo('wishlist')">
+                            <div class="stat-icon">❤️</div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="wishlistCount">0</div>
+                                <div class="stat-label">Wishlist Items</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="totalSpent">₹0</div>
+                                <div class="stat-label">Total Spent</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-details">
+                        <div class="detail-item">
+                            <label>Phone</label>
+                            <p id="profileViewPhone">Not provided</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Address</label>
+                            <p id="profileViewAddress">Not provided</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Member Since</label>
+                            <p id="profileViewJoined">-</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <button class="btn btn-secondary" onclick="togglePasswordModal()">Change Password</button>
+                    </div>
+                </div>
+
+                <!-- Profile Edit Mode -->
+                <div id="profileEdit" class="profile-edit" style="display: none;">
+                    <form id="profileForm" class="form">
+                        <div class="form-group">
+                            <label for="profileName">Name</label>
+                            <input type="text" id="profileName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profilePhone">Phone Number</label>
+                            <input type="tel" id="profilePhone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profileEmail">Email</label>
+                            <input type="email" id="profileEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profileAddress">Address</label>
+                            <textarea id="profileAddress" rows="2" required></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="button" class="btn btn-secondary" onclick="cancelEditMode()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Register Section -->
+        <section id="register" class="section">
+            <h2>Create Account</h2>
+            <div class="auth-container">
+                <div class="auth-form">
+                    <h3>Join Our Store</h3>
+                    <p class="auth-subtitle">Create an account to start shopping</p>
+                    <form id="registerPageForm" class="form">
+                        <div class="form-group">
+                            <label for="registerPageName">Full Name</label>
+                            <input type="text" id="registerPageName" required placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPagePhone">Phone Number</label>
+                            <input type="tel" id="registerPagePhone" required placeholder="Enter your phone number">
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPageEmail">Email Address</label>
+                            <input type="email" id="registerPageEmail" required placeholder="Enter your email">
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPagePassword">Password</label>
+                            <input type="password" id="registerPagePassword" required minlength="6" placeholder="Create a password (min 6 characters)">
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPageAddress">Delivery Address</label>
+                            <textarea id="registerPageAddress" rows="3" required placeholder="Enter your delivery address"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-large">Create Account</button>
+                    </form>
+                    <p class="auth-footer">
+                        Already have an account? <a href="#" onclick="navigateTo('login')">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Section -->
+        <section id="login" class="section">
+            <h2>Login</h2>
+            <div class="auth-container">
+                <div class="auth-form">
+                    <h3>Welcome Back</h3>
+                    <p class="auth-subtitle">Login to access your account</p>
+                    <form id="loginPageForm" class="form">
+                        <div class="form-group">
+                            <label for="loginPageEmail">Email Address</label>
+                            <input type="email" id="loginPageEmail" required placeholder="Enter your email">
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPagePassword">Password</label>
+                            <input type="password" id="loginPagePassword" required placeholder="Enter your password">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-large">Login</button>
+                    </form>
+                    <p class="auth-footer">
+                        Don't have an account? <a href="#" onclick="navigateTo('register')">Register here</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Wishlist Section -->
+        <section id="wishlist" class="section">
+            <h2>My Wishlist</h2>
+            <div id="wishlistItems"></div>
+        </section>
+
+        <!-- Admin Section -->
+        <section id="admin" class="section">
+            <h2>Admin Panel</h2>
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="addProduct">Add Product</button>
+                <button class="tab-btn" data-tab="manageProducts">Manage Products</button>
+                <button class="tab-btn" data-tab="allOrders">All Orders</button>
+            </div>
+            
+            <!-- Add Product Tab -->
+            <div id="addProduct" class="tab-content active">
+                <form id="addProductForm" class="form">
+                    <div class="form-group">
+                        <label for="productName">Product Name</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productDescription">Description</label>
+                        <textarea id="productDescription" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Price</label>
+                        <input type="number" id="productPrice" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategory">Category</label>
+                        <input type="text" id="productCategory" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productImageUrl">Image URL</label>
+                        <input type="url" id="productImageUrl">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Product</button>
+                </form>
+            </div>
+
+            <!-- Manage Products Tab -->
+            <div id="manageProducts" class="tab-content">
+                <div id="adminProductsList" class="admin-products-list"></div>
+            </div>
+
+            <!-- All Orders Tab -->
+            <div id="allOrders" class="tab-content">
+                <div id="allOrdersList" class="orders-list"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Edit Product Modal -->
+    <div id="editProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Product</h2>
+            <form id="editProductForm" class="form">
+                <input type="hidden" id="editProductId">
+                <div class="form-group">
+                    <label for="editProductName">Product Name</label>
+                    <input type="text" id="editProductName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editProductDescription">Description</label>
+                    <textarea id="editProductDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editProductPrice">Price</label>
+                    <input type="number" id="editProductPrice" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="editProductCategory">Category</label>
+                    <input type="text" id="editProductCategory" required>
+                </div>
+                <div class="form-group">
+                    <label for="editProductImageUrl">Image URL</label>
+                    <input type="url" id="editProductImageUrl">
+                </div>
+                <button type="submit" class="btn btn-primary">Update Product</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Change Password</h2>
+            <form id="changePasswordForm" class="form">
+                <div class="form-group">
+                    <label for="currentPassword">Current Password</label>
+                    <input type="password" id="currentPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm New Password</label>
+                    <input type="password" id="confirmPassword" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary">Change Password</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- JavaScript Modules -->
+    <script src="js/api.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/orders.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/wishlist.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

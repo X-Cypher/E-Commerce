@@ -35,4 +35,15 @@ public class OrderController {
         return orderService.getUserOrders(userId);
     }
 
+    @PutMapping("/{orderId}/status")
+    public OrderDTO updateOrderStatus(@PathVariable Long orderId, @RequestBody String status){
+        return orderService.updateOrderStatus(orderId, status);
+    }
+
+    @DeleteMapping("/{orderId}")
+    @CrossOrigin("*")
+    public void cancelOrder(@PathVariable Long orderId){
+        orderService.cancelOrder(orderId);
+    }
+
 }
