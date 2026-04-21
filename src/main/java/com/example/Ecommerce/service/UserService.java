@@ -12,16 +12,19 @@ import java.util.List;
 public class UserService {
 
     private final UserRepo userRepo;
+    private final EmailService emailService;
 
     @Autowired
-    public UserService(UserRepo userRepo) {
+    public UserService(UserRepo userRepo, EmailService emailService) {
         this.userRepo = userRepo;
+        this.emailService = emailService;
     }
 
     public User registerUser(User user) {
         try {
             user.setCreatedAt(LocalDateTime.now());
             User newUser = userRepo.save(user);
+            emailService.sendWelcomeEmail(user.getEmail(), user.getName());
             System.out.println("User Added to Database");
             return newUser;
         } catch (Exception e) {
