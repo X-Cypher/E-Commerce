@@ -118,7 +118,7 @@ public class OrderService {
         return orderDTOS;
     }
 
-    public OrderDTO updateOrderStatus(Long orderId, String status) {
+    public OrderDTO updateOrderStatus(String orderId, String status) {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order with id " + orderId + " not found"));
         order.setStatus(status);
@@ -136,7 +136,7 @@ public class OrderService {
         return new OrderDTO(savedOrder.getId(), savedOrder.getTotalAmount(), savedOrder.getStatus(), savedOrder.getOrderDate(), orderItemDTOS);
     }
 
-    public void cancelOrder(Long orderId) {
+    public void cancelOrder(String orderId) {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order with id " + orderId + " not found"));
         orderRepo.delete(order);
