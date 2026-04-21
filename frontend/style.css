@@ -151,6 +151,89 @@ body {
     margin-top: 1.5rem;
 }
 
+/* Payment Section */
+.payment-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 2rem auto;
+}
+
+.order-summary {
+    background: var(--surface);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.payment-form {
+    background: var(--surface);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.payment-form #payButton {
+    margin-top: 3rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.order-summary h3,
+.payment-form h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+}
+
+.payment-info {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+#paymentOrderItems {
+    margin-bottom: 1.5rem;
+}
+
+.payment-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.payment-item:last-child {
+    border-bottom: none;
+}
+
+.payment-item-name {
+    font-weight: 500;
+}
+
+.payment-item-price {
+    color: var(--secondary);
+    font-weight: 600;
+}
+
+.order-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 2px solid var(--border);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+#paymentTotal {
+    color: var(--secondary);
+    font-size: 1.5rem;
+}
+
 /* Hero Section */
 .hero {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 50%, var(--secondary) 100%);

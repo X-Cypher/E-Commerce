@@ -71,7 +71,7 @@ function renderWishlist() {
         
         const imageUrl = product.imageUrl || 'https://via.placeholder.com/280x200?text=No+Image';
         return `
-            <div class="product-card">
+            <div class="product-card" onclick="viewProductDetails(${product.id})" style="cursor: pointer;">
                 <img src="${imageUrl}" alt="${product.name}" class="product-image" onerror="this.src='https://via.placeholder.com/280x200?text=No+Image'">
                 <div class="product-info">
                     <h3 class="product-name">${product.name || 'Unknown Product'}</h3>
@@ -79,8 +79,8 @@ function renderWishlist() {
                     <span class="product-category">${product.category || 'Uncategorized'}</span>
                     <div class="product-price">₹${(product.price || 0).toFixed(2)}</div>
                     <div class="product-actions">
-                        <button class="btn btn-primary" onclick="addToCart(${product.id})">Add to Cart</button>
-                        <button class="btn btn-danger" onclick="removeFromWishlist(${product.id})">Remove</button>
+                        <button class="btn btn-primary" onclick="event.stopPropagation(); addToCart(${product.id})">Add to Cart</button>
+                        <button class="btn btn-danger" onclick="event.stopPropagation(); removeFromWishlist(${product.id})">Remove</button>
                     </div>
                 </div>
             </div>

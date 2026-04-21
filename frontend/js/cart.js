@@ -48,6 +48,11 @@ function updateCartQuantity(productId, change) {
     updateCartCount();
 }
 
+function clearCart() {
+    setCart([]);
+    updateCartCount();
+}
+
 function updateCartCount() {
     const cart = getCart() || [];
     const count = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
@@ -107,27 +112,5 @@ async function handleCheckout() {
         return;
     }
 
-    setButtonLoading('checkoutBtn', true);
-
-    const productQuantities = {};
-    cart.forEach(item => {
-        productQuantities[item.productId] = item.quantity;
-    });
-
-    try {
-        const order = await apiCall(`/orders/place/${user.id}`, {
-            method: 'POST',
-            body: JSON.stringify({ productQuantities })
-        });
-
-        setCart([]);
-        updateCartCount();
-        renderCart();
-        showToast('Order placed successfully!', 'success');
-        navigateTo('orders');
-    } catch (error) {
-        showToast('Failed to place order', 'error');
-    } finally {
-        setButtonLoading('checkoutBtn', false);
-    }
+    navigateTo('payment');
 }

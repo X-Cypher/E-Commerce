@@ -42,6 +42,10 @@ function navigateTo(sectionId) {
         renderProducts();
     } else if (sectionId === 'cart') {
         renderCart();
+    } else if (sectionId === 'payment') {
+        if (typeof renderPaymentOrderSummary === 'function') {
+            setTimeout(renderPaymentOrderSummary, 50);
+        }
     } else if (sectionId === 'orders') {
         if (user) {
             loadUserOrders();
