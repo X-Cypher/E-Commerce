@@ -1,5 +1,6 @@
 package com.example.Ecommerce.controller;
 
+import com.example.Ecommerce.dto.LoginDTO;
 import com.example.Ecommerce.entity.User;
 import com.example.Ecommerce.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public User loginUser(@RequestBody User user){
-        return userService.loginUser(user.getEmail(), user.getPassword());
+    public User loginUser(@RequestBody LoginDTO credentials){
+        return userService.loginUser(credentials.getEmail(), credentials.getPassword());
+    }
+
+    @PutMapping("/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody User user){
+        return userService.updateUser(id, user);
     }
 
     @GetMapping

@@ -23,18 +23,25 @@ public class ProductService {
 
     public Product getProductById(Long id) {
         return productRepo.findById(id)
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException("Product with id " + id + " not found"));
     }
 
     public Product addProduct(Product product) {
         return productRepo.save(product);
     }
 
+    public Product updateProduct(Long id, Product product) {
+        Product existingProduct = getProductById(id);
+        existingProduct.setName(product.getName());
+        existingProduct.setDescription(product.getDescription());
+        existingProduct.setPrice(product.getPrice());
+        existingProduct.setImageUrl(product.getImageUrl());
+        existingProduct.setCategory(product.getCategory());
+        return productRepo.save(existingProduct);
+    }
+
     public void deleteProduct(Long id) {
         Product product = getProductById(id);
-        if(product == null){
-            throw new RuntimeException("Product with id " + id + " not found");
-        }
         productRepo.deleteById(id);
     }
 }

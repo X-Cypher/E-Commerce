@@ -5,21 +5,26 @@ import com.example.Ecommerce.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class UserService {
 
     private final UserRepo userRepo;
+    private final EmailService emailService;
 
     @Autowired
-    public UserService(UserRepo userRepo) {
+    public UserService(UserRepo userRepo, EmailService emailService) {
         this.userRepo = userRepo;
+        this.emailService = emailService;
     }
 
     public User registerUser(User user) {
         try {
+            user.setCreatedAt(LocalDateTime.now());
             User newUser = userRepo.save(user);
+            emailService.sendWelcomeEmail(user.getEmail(), user.getName());
             System.out.println("User Added to Database");
             return newUser;
         } catch (Exception e) {
@@ -35,6 +40,16 @@ public class UserService {
         }
         //invalid credentials
         return null;
+    }
+
+    public User updateUser(Long id, User user) {
+        User existingUser = userRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
+        existingUser.setName(user.getName());
+        existingUser.setPhoneNo(user.getPhoneNo());
+        existingUser.setEmail(user.getEmail());
+        existingUser.setAddress(user.getAddress());
+        return userRepo.save(existingUser);
     }
 
     public List<User> getAllUsers() {
