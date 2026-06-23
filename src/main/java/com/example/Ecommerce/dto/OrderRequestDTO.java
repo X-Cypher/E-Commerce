@@ -14,4 +14,6 @@ public class OrderRequestDTO {
     //product id and quantity
     private Map<Long, Integer> productQuantities;
 
+    private Long addressId;
+
 }

@@ -1,6 +1,5 @@
 package com.example.Ecommerce.controller;
 
-import com.example.Ecommerce.dto.LoginDTO;
 import com.example.Ecommerce.entity.User;
 import com.example.Ecommerce.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin("*")
 public class UserController {
 
     private final UserService userService;
@@ -18,16 +16,6 @@ public class UserController {
     @Autowired
     public UserController(UserService userService){
         this.userService = userService;
-    }
-
-    @PostMapping("/register")
-    public User registerUser(@RequestBody User user){
-        return userService.registerUser(user);
-    }
-
-    @PostMapping("/login")
-    public User loginUser(@RequestBody LoginDTO credentials){
-        return userService.loginUser(credentials.getEmail(), credentials.getPassword());
     }
 
     @PutMapping("/{id}")

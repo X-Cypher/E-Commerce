@@ -2,10 +2,12 @@ package com.example.Ecommerce.service;
 
 import com.example.Ecommerce.dto.OrderDTO;
 import com.example.Ecommerce.dto.OrderItemDTO;
+import com.example.Ecommerce.entity.Address;
 import com.example.Ecommerce.entity.Order;
 import com.example.Ecommerce.entity.OrderItem;
 import com.example.Ecommerce.entity.Product;
 import com.example.Ecommerce.entity.User;
+import com.example.Ecommerce.repo.AddressRepo;
 import com.example.Ecommerce.repo.OrderRepo;
 import com.example.Ecommerce.repo.ProductRepo;
 import com.example.Ecommerce.repo.UserRepo;
@@ -24,16 +26,18 @@ public class OrderService {
     private final UserRepo userRepo;
     private final ProductRepo productRepo;
     private final OrderRepo orderRepo;
+    private final AddressRepo addressRepo;
 
     @Autowired
-    public OrderService(UserRepo userRepo, ProductRepo productRepo, OrderRepo orderRepo) {
+    public OrderService(UserRepo userRepo, ProductRepo productRepo, OrderRepo orderRepo, AddressRepo addressRepo) {
         this.userRepo = userRepo;
         this.productRepo = productRepo;
         this.orderRepo = orderRepo;
+        this.addressRepo = addressRepo;
     }
 
     // We are returning OrderDTO because we want to display only the relevant data to the user, not the whole order. So unlike Order, OrderDto contains only the relevant order details not all
-    public OrderDTO placeOrder(Long userId, Map<Long, Integer> productQuantities) {
+    public OrderDTO placeOrder(Long userId, Map<Long, Integer> productQuantities, Long addressId) {
 
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("No user with id " + userId + " found"));
@@ -42,6 +46,13 @@ public class OrderService {
         order.setUser(user);
         order.setOrderDate(new Date());
         order.setStatus("Pending");
+
+        // Set address if provided
+        if (addressId != null) {
+            Address address = addressRepo.findById(addressId)
+                    .orElseThrow(() -> new RuntimeException("Address not found"));
+            order.setAddress(address);
+        }
 
         // for order we need order items
         List<OrderItem> orderItems = new ArrayList<>();

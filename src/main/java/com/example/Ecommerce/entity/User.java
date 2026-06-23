@@ -30,7 +30,9 @@ public class User {
 
     private String password;
 
-    private String address;
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Address> addresses;
 
     @JsonIgnore //means orders ko serialize mat kro jab user ki baat ho
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) //user field in the order entity will manage the relationship

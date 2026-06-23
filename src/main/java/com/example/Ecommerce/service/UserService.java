@@ -3,6 +3,7 @@ package com.example.Ecommerce.service;
 import com.example.Ecommerce.entity.User;
 import com.example.Ecommerce.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,15 +14,18 @@ public class UserService {
 
     private final UserRepo userRepo;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepo userRepo, EmailService emailService) {
+    public UserService(UserRepo userRepo, EmailService emailService, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User registerUser(User user) {
         try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setCreatedAt(LocalDateTime.now());
             User newUser = userRepo.save(user);
             emailService.sendWelcomeEmail(user.getEmail(), user.getName());
@@ -33,22 +37,13 @@ public class UserService {
         return null;
     }
 
-    public User loginUser(String email, String password) {
-        User user = userRepo.findByEmail(email);
-        if(user != null && user.getPassword().equals(password)){
-            return user;
-        }
-        //invalid credentials
-        return null;
-    }
-
     public User updateUser(Long id, User user) {
         User existingUser = userRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
         existingUser.setName(user.getName());
         existingUser.setPhoneNo(user.getPhoneNo());
         existingUser.setEmail(user.getEmail());
-        existingUser.setAddress(user.getAddress());
+        existingUser.setAddresses(user.getAddresses());
         return userRepo.save(existingUser);
     }
 

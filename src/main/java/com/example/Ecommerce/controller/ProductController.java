@@ -9,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/products")
-@CrossOrigin("*")
 public class ProductController {
 
     private final ProductService productService;
@@ -25,7 +24,6 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    @CrossOrigin("*")
     public Product getProductById(@PathVariable Long id){
         return productService.getProductById(id);
     }

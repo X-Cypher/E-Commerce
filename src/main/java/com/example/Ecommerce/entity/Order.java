@@ -24,6 +24,10 @@ public class Order {
     @JsonBackReference //user will manage serialization
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address address;
+
     private Double totalAmount;
 
     private String status;
