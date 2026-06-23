@@ -13,34 +13,34 @@ function initPayment() {
 function renderPaymentOrderSummary() {
     const container = document.getElementById('paymentOrderItems');
     const totalElement = document.getElementById('paymentTotal');
-    
+
     if (!container || !totalElement) {
         return;
     }
-    
+
     const cart = getCart();
     const products = getProducts();
-    
+
     if (!cart || cart.length === 0) {
         container.innerHTML = '<p class="text-secondary">Your cart is empty</p>';
         totalElement.textContent = '₹0.00';
         return;
     }
-    
+
     if (!products || products.length === 0) {
         container.innerHTML = '<p class="text-secondary">Products not loaded</p>';
         totalElement.textContent = '₹0.00';
         return;
     }
-    
+
     let total = 0;
     container.innerHTML = cart.map(item => {
         const product = products.find(p => p.id === item.productId);
         if (!product) return '';
-        
+
         const itemTotal = (product.price || 0) * (item.quantity || 0);
         total += itemTotal;
-        
+
         return `
             <div class="payment-item">
                 <div class="payment-item-name">
@@ -50,8 +50,19 @@ function renderPaymentOrderSummary() {
             </div>
         `;
     }).join('');
-    
+
     totalElement.textContent = `₹${total.toFixed(2)}`;
+}
+
+function showPaymentSpinner(show) {
+    const spinner = document.getElementById('paymentSpinner');
+    const payButton = document.getElementById('payButton');
+    if (spinner) {
+        spinner.style.display = show ? 'flex' : 'none';
+    }
+    if (payButton) {
+        payButton.style.display = show ? 'none' : 'block';
+    }
 }
 
 async function initiatePayment() {
@@ -89,13 +100,14 @@ async function initiatePayment() {
     
     try {
         setButtonLoading('payButton', true);
-        
+        showPaymentSpinner(true);
+
         // Create order on backend
         const orderDetails = {
             user: { id: user.id },
             amount: total
         };
-        
+
         const response = await fetch(`${API_BASE_URL}/payment/create`, {
             method: 'POST',
             headers: {
@@ -103,15 +115,15 @@ async function initiatePayment() {
             },
             body: JSON.stringify(orderDetails)
         });
-        
+
         if (!response.ok) {
             throw new Error('Failed to create payment order');
         }
-        
+
         const order = await response.json();
-        
+
         currentOrderId = order.id;
-        
+
         // Open Razorpay checkout
         const options = {
             key: RAZORPAY_KEY,
@@ -134,16 +146,18 @@ async function initiatePayment() {
                 ondismiss: function() {
                     console.log('Payment modal dismissed');
                     setButtonLoading('payButton', false);
+                    showPaymentSpinner(false);
                 }
             }
         };
-        
+
         const rzp = new Razorpay(options);
         rzp.open();
-        
+
     } catch (error) {
         console.error('Payment error:', error);
         showToast('Payment initiation failed', 'error');
+        showPaymentSpinner(false);
     } finally {
         setButtonLoading('payButton', false);
     }
