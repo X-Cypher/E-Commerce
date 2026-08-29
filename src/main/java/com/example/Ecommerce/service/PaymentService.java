@@ -1,8 +1,10 @@
 package com.example.Ecommerce.service;
 
+import com.example.Ecommerce.entity.Address;
 import com.example.Ecommerce.entity.Order;
 import com.example.Ecommerce.entity.OrderItem;
 import com.example.Ecommerce.entity.PaymentOrder;
+import com.example.Ecommerce.repo.AddressRepo;
 import com.example.Ecommerce.repo.OrderRepo;
 import com.example.Ecommerce.repo.PaymentRepo;
 import com.razorpay.RazorpayClient;
@@ -29,11 +31,14 @@ public class PaymentService {
 
     private final OrderRepo orderRepo;
 
+    private final AddressRepo addressRepo;
+
     @Autowired
-    public PaymentService(EmailService emailService, PaymentRepo paymentRepo, OrderRepo orderRepo) {
+    public PaymentService(EmailService emailService, PaymentRepo paymentRepo, OrderRepo orderRepo, AddressRepo addressRepo) {
         this.emailService = emailService;
         this.paymentRepo = paymentRepo;
         this.orderRepo = orderRepo;
+        this.addressRepo = addressRepo;
     }
 
     @Value("${razorpay.api.key}")
@@ -67,7 +72,7 @@ public class PaymentService {
         }
     }
 
-    public void updateOrderStatus(String orderId, String status, List<OrderItem> orderItems){
+    public void updateOrderStatus(String orderId, String status, List<OrderItem> orderItems, Long addressId){
         try {
             PaymentOrder paymentOrder = paymentRepo.findByOrderId(orderId)
                     .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -79,6 +84,14 @@ public class PaymentService {
                 Order order = new Order();
                 order.setId(paymentOrder.getTransactionId()); // Set Order ID to Razorpay order ID
                 order.setUser(paymentOrder.getUser());
+                
+                // Set address if provided
+                if (addressId != null) {
+                    Address address = addressRepo.findById(addressId)
+                            .orElseThrow(() -> new RuntimeException("Address not found"));
+                    order.setAddress(address);
+                }
+                
                 order.setOrderDate(new Date());
                 order.setStatus("Confirmed");
                 order.setOrderItems(orderItems);

@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
-@CrossOrigin("*")
 public class OrderController {
 
     private final OrderService orderService;
@@ -22,7 +21,7 @@ public class OrderController {
 
     @PostMapping("/place/{userId}")
     public OrderDTO placeOrder(@PathVariable Long userId, @RequestBody OrderRequestDTO orderRequestDTO){
-        return orderService.placeOrder(userId, orderRequestDTO.getProductQuantities());
+        return orderService.placeOrder(userId, orderRequestDTO.getProductQuantities(), orderRequestDTO.getAddressId());
     }
 
     @GetMapping("/all")
@@ -41,7 +40,6 @@ public class OrderController {
     }
 
     @DeleteMapping("/{orderId}")
-    @CrossOrigin("*")
     public void cancelOrder(@PathVariable String orderId){
         orderService.cancelOrder(orderId);
     }

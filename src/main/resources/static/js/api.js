@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = ''; // Empty string for relative paths since frontend is served from backend
 
 // Helper function to get CSRF token from cookie
 function getCsrfToken() {

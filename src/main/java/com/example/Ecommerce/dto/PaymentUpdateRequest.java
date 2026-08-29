@@ -15,5 +15,6 @@ public class PaymentUpdateRequest {
     private String orderId;
     private String status;
     private List<OrderItem> orderItems;
+    private Long addressId;
 
 }

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MavenMart</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.ico">
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
@@ -204,10 +205,6 @@
                             <label for="registerPagePassword">Password</label>
                             <input type="password" id="registerPagePassword" required minlength="6" placeholder="Create a password (min 6 characters)">
                         </div>
-                        <div class="form-group">
-                            <label for="registerPageAddress">Delivery Address</label>
-                            <textarea id="registerPageAddress" rows="3" required placeholder="Enter your delivery address"></textarea>
-                        </div>
                         <button type="submit" class="btn btn-primary btn-large">Create Account</button>
                     </form>
                     <p class="auth-footer">
@@ -296,6 +293,10 @@
                     <h3>Payment Details</h3>
                     <p class="payment-info">Complete your payment securely using Razorpay</p>
                     <button id="payButton" class="btn btn-primary btn-large">Pay Now</button>
+                    <div id="paymentSpinner" class="spinner" style="display: none;">
+                        <div class="spinner-border"></div>
+                        <p>Processing payment...</p>
+                    </div>
                 </div>
             </div>
         </section>
