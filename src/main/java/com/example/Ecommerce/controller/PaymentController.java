@@ -3,7 +3,9 @@ package com.example.Ecommerce.controller;
 import com.example.Ecommerce.dto.PaymentUpdateRequest;
 import com.example.Ecommerce.entity.PaymentOrder;
 import com.example.Ecommerce.service.PaymentService;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +26,9 @@ public class PaymentController {
     @PostMapping("/create")
     public ResponseEntity<String> createOrder(@RequestBody PaymentOrder orderDetails) {
         String orderResponse = paymentService.createOrder(orderDetails);
-        return ResponseEntity.ok(orderResponse);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(orderResponse);
     }
 
     @PostMapping("/update")

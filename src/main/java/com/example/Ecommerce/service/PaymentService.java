@@ -53,7 +53,8 @@ public class PaymentService {
             String transactionId = "txn_" + UUID.randomUUID();
 
             JSONObject orderRequest = new JSONObject();
-            orderRequest.put("amount", (int) orderDetails.getAmount() * 100); // *100 because amount is needed to be set in paise
+            int amountInPaise = (int) Math.round(orderDetails.getAmount() * 100);
+            orderRequest.put("amount", amountInPaise); // *100 because amount is needed to be set in paise
             orderRequest.put("currency", "INR");
             orderRequest.put("receipt", transactionId);
             com.razorpay.Order rzp_order = client.orders.create(orderRequest);
@@ -84,24 +85,24 @@ public class PaymentService {
                 Order order = new Order();
                 order.setId(paymentOrder.getTransactionId()); // Set Order ID to Razorpay order ID
                 order.setUser(paymentOrder.getUser());
-                
+
                 // Set address if provided
                 if (addressId != null) {
                     Address address = addressRepo.findById(addressId)
                             .orElseThrow(() -> new RuntimeException("Address not found"));
                     order.setAddress(address);
                 }
-                
+
                 order.setOrderDate(new Date());
                 order.setStatus("Confirmed");
                 order.setOrderItems(orderItems);
                 order.setTotalAmount(paymentOrder.getAmount());
-                
+
                 // Set the order reference in each order item
                 orderItems.forEach(item -> item.setOrder(order));
-                
+
                 orderRepo.save(order);
-                
+
                 emailService.sendEmail(paymentOrder.getUser().getEmail(), paymentOrder.getUser().getName(), paymentOrder.getAmount(), orderItems);
             }
         } catch(Exception e){

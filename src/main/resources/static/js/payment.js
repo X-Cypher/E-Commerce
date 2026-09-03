@@ -108,19 +108,10 @@ async function initiatePayment() {
             amount: total
         };
 
-        const response = await fetch(`${API_BASE_URL}/payment/create`, {
+        const order = await apiCall('/payment/create', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify(orderDetails)
         });
-
-        if (!response.ok) {
-            throw new Error('Failed to create payment order');
-        }
-
-        const order = await response.json();
 
         currentOrderId = order.id;
 
@@ -156,7 +147,14 @@ async function initiatePayment() {
 
     } catch (error) {
         console.error('Payment error:', error);
-        showToast('Payment initiation failed', 'error');
+        if (error.status === 401) {
+            showToast('Please login to proceed with payment', 'error');
+            navigateTo('login');
+        } else if (error.status === 400) {
+            showToast('Invalid payment request. Please try again.', 'error');
+        } else {
+            showToast('Payment initiation failed', 'error');
+        }
         showPaymentSpinner(false);
     } finally {
         setButtonLoading('payButton', false);
@@ -168,7 +166,7 @@ async function handlePaymentSuccess(response, total) {
         const user = getCurrentUser();
         const cart = getCart();
         const products = getProducts();
-        
+
         // Prepare order items for email
         const orderItems = cart.map(item => {
             const product = products.find(p => p.id === item.productId);
@@ -177,14 +175,11 @@ async function handlePaymentSuccess(response, total) {
                 quantity: item.quantity
             };
         });
-        
+
         // Update order status on backend
         const selectedAddressId = sessionStorage.getItem('selectedAddressId');
-        const updateResponse = await fetch(`${API_BASE_URL}/payment/update`, {
+        await apiCall('/payment/update', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify({
                 orderId: currentOrderId,
                 status: 'Success',
@@ -192,17 +187,13 @@ async function handlePaymentSuccess(response, total) {
                 addressId: selectedAddressId ? parseInt(selectedAddressId) : null
             })
         });
-        
-        if (!updateResponse.ok) {
-            throw new Error('Failed to update payment status');
-        }
-        
+
         showToast('Payment successful! Order confirmation sent to your email.', 'success');
-        
+
         // Clear cart and navigate to orders
         clearCart();
         navigateTo('orders');
-        
+
     } catch (error) {
         console.error('Payment success handling error:', error);
         showToast('Payment was successful but order processing failed', 'error');
