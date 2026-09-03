@@ -25,7 +25,7 @@ async function handleLogin(e) {
         showToast('Login successful!', 'success');
         document.getElementById('loginPageForm').reset();
     } catch (error) {
-        const errorMessage = error.error || 'Login failed. Please check your credentials.';
+        const errorMessage = error.data?.error || error.data || 'Login failed. Please check your credentials.';
         showToast(errorMessage, 'error');
     } finally {
         submitButton.textContent = originalText;
@@ -62,7 +62,7 @@ async function handleRegister(e) {
         showToast('Registration successful!', 'success');
         document.getElementById('registerPageForm').reset();
     } catch (error) {
-        const errorMessage = error.error || 'Registration failed. Please try again.';
+        const errorMessage = error.data?.error || error.data || 'Registration failed. Please try again.';
         showToast(errorMessage, 'error');
     } finally {
         submitButton.textContent = originalText;

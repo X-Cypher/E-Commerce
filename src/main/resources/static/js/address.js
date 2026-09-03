@@ -92,34 +92,16 @@ async function saveAddress(event) {
     };
 
     try {
-        let response;
         if (addressId) {
-            response = await fetch(`${API_BASE_URL}/address/update/${addressId}`, {
+            await apiCall(`/address/update/${addressId}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify(addressData)
             });
         } else {
-            response = await fetch(`${API_BASE_URL}/address/add/${user.id}`, {
+            await apiCall(`/address/add/${user.id}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify(addressData)
             });
-        }
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            if (response.status === 400 && errorData) {
-                // Display validation errors
-                const errorMessages = Object.values(errorData).join(', ');
-                showToast(errorMessages, 'error');
-                return;
-            }
-            throw new Error('Failed to save address');
         }
 
         showToast(addressId ? 'Address updated successfully' : 'Address added successfully', 'success');
@@ -127,7 +109,12 @@ async function saveAddress(event) {
         await loadAddresses();
     } catch (error) {
         console.error('Error saving address:', error);
-        showToast('Failed to save address', 'error');
+        if (error.status === 400 && error.data) {
+            const errorMessages = Object.values(error.data).join(', ');
+            showToast(errorMessages, 'error');
+        } else {
+            showToast('Failed to save address', 'error');
+        }
     }
 }
 
@@ -147,11 +134,8 @@ async function deleteAddress(addressId) {
 
 async function setDefaultAddress(addressId) {
     try {
-        await fetch(`${API_BASE_URL}/address/set-default/${addressId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+        await apiCall(`/address/set-default/${addressId}`, {
+            method: 'PUT'
         });
         showToast('Default address updated', 'success');
         await loadAddresses();

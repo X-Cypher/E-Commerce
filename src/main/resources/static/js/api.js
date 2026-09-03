@@ -36,7 +36,18 @@ async function apiCall(endpoint, options = {}) {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            // Try to parse error response for validation errors
+            let errorData = null;
+            try {
+                errorData = await response.json();
+            } catch (e) {
+                // If response is not JSON, use status text
+            }
+
+            const error = new Error(`HTTP error! status: ${response.status}`);
+            error.status = response.status;
+            error.data = errorData;
+            throw error;
         }
 
         // Handle DELETE requests that return no body
@@ -44,7 +55,14 @@ async function apiCall(endpoint, options = {}) {
             return null;
         }
 
-        return await response.json();
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            return await response.json();
+        } else {
+            // Return text response for non-JSON responses
+            return await response.text();
+        }
     } catch (error) {
         console.error('API Error:', error);
         throw error;
